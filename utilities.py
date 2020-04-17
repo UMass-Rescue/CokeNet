@@ -1,5 +1,4 @@
 
-
 def compute_accuracy_labelwise(map_, labels_to_watch):
     ''' Computes the probability of rightly-classified labels'''
     false = 0

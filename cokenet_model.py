@@ -8,6 +8,7 @@ import os
 import cv2
 from matplotlib.image import imread
 import gdown
+from retrainable_module import retrain_model
 
 # Global Variables
 DEFAULT_OUTPUT_SHAPE = 160
@@ -45,6 +46,12 @@ class CokeModel:
         fetch_model_file()
         self.model = tf.keras.models.load_model(model_path, custom_objects={'RAdam': RAdam(lr=0.01)})
         
+    def get_model(self):
+        return (self.model)
+    
+    def set_model(self, model):
+        self.model = model
+        
     def load_image(self, img):
         img = self.resize_image_single(img)
         if len(img.shape) == 4:
@@ -72,7 +79,8 @@ class CokeModel:
         resized[resized<0] = 0
         if resized.shape == (self.output_shape, self.output_shape, 4):
             resized = resized[:, :, :3]
-        return resized
+        return cv2.normalize(resized, None, alpha = 0, beta = 255, norm_type = cv2.NORM_MINMAX, 
+                                 dtype = cv2.CV_32F).astype(np.uint8)
             
     def resize_image_single(self, im):
         if len(im.shape) == 3:
@@ -118,3 +126,15 @@ class CokeModel:
                 if len(output_csv_path) > 0:
                     save_to_file(output_csv_path, results_tray, mode)
             return results_tray
+    def retrain(self, dir_positive, dir_negative, dir_val_positive, dir_val_negative, transformation_positive, 
+            transformation_negative, model_parameters={}, augmentation_training=True, augmentation_validation=False, 
+            output_shape=160, severity = list(map(lambda x: x+1, np.arange(5))), delete_metadata=True):
+    
+        self.model = retrain_model(model=self.model, dir_coke=dir_positive, dir_not_coke=dir_negative, 
+               model_params=model_parameters, dir_val_coke=dir_val_positive, dir_val_not_coke=dir_val_negative, 
+            default_transformations_coke=transformation_positive, default_transformations_not_coke=transformation_negative, 
+            augmentation_training=augmentation_training, augmentation_validation=augmentation_validation, 
+            output_shape=output_shape, severity=severity)
+        # TODO : Delete all created folders
+        return
+
