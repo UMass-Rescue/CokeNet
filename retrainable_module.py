@@ -144,7 +144,7 @@ def retrain_model(model, dir_coke, dir_not_coke, model_params, dir_val_coke, dir
     
     # Default Model parameters
     default_max_epochs, default_split_size, default_batch_size = 15, 6144, 3072
-    default_model_save_path = 'cokenet/model'
+    default_model_save_path = 'sodanet/model'
     
     max_epochs = model_params.get('max_epochs') or default_max_epochs
     split_size = model_params.get('split_size') or default_split_size
