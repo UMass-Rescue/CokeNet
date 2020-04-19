@@ -125,7 +125,7 @@ class SodaModel:
                 results_tray[self.files[idx]] = np.argmax(computed_preds[idx])
                 if len(output_csv_path) > 0:
                     save_to_file(output_csv_path, results_tray, mode)
-            return results_tray
+            return computed_preds, results_tray
     def retrain(self, dir_positive, dir_negative, dir_val_positive, dir_val_negative, transformation_positive, 
             transformation_negative, model_parameters={}, augmentation_training=True, augmentation_validation=False, 
             output_shape=160, severity = list(map(lambda x: x+1, np.arange(5))), delete_metadata=True):
